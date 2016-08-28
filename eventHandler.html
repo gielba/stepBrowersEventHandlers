@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>eventHandler</title>
+    <link href="" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="box">
+        <input type="button" value="button1" id="btn1" onclick="handlerTest()">
+        <input type="button" value="button2" id="btn2">
+        <input type="button" value="button3" id="btn3">
+    </div>
+    <script>
+        function handlerTest() {
+            alert("跨浏览器事件处理测试");
+        }
+        var btn2 = document.getElementById("btn2");
+        var btn3 = document.getElementById("btn3");
+        btn2 = function () {
+          alert("DOM0级事件");
+        };
+        btn2 = null;  //销毁btn2按钮
+
+        //封装跨浏览器事件处理的函数(支持IE低版本浏览器)
+        var eventHandler = {
+            //添加事件监听
+            addHandler:function (element,type,handler) {
+                if(element.addEventListener){
+                    element.addEventListener(type,handler,false); //DOM2级 (非IE)
+                }else if(element.attachEvent){
+                    element.attachEvent('on'+type,handler); //DOM2级 (IE)
+                }else {
+                    element['on'+type] = handler; //DOM0级事件处理
+                }
+            },
+            //移除事件监听
+            removeHander:function (element,type,handler) {
+                if(element.removeEventListener){
+                    element.removeEventListener(type,handler,false); //DOM2级 (非IE)
+                }else if(element.detachEvent){
+                    element.detachEvent('on'+type,handler); //DOM2级 (IE)
+                }else {
+                    element['on'+type] = null; //DOM0级事件处理
+                }
+            }
+        };
+        eventHandler.addHandler(btn3,"click",handlerTest); //调用函数
+    </script>
+</body>
+</html>
